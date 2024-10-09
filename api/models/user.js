@@ -9,9 +9,9 @@ const UserSchema = new Schema(
 		first_name: { type: String, required: true, maxLength: 100 },
 		last_name: { type: String, required: true, maxLength: 100 },
 		profile_pic: { type: String },
-		profile_bio: { type: String, required: true, maxLength: 500 },
+		profile_bio: { type: String, maxLength: 500 },
 		friends: [{ Type: Schema.Types.ObjectId, ref: "User" }],
-		online: { type: Boolean, required: true },
+		last_activity: { Type: Date },
 	},
 	{ timestamps: true },
 );
