@@ -10,8 +10,8 @@ const UserSchema = new Schema(
 		last_name: { type: String, required: true, maxLength: 100 },
 		profile_pic: { type: String },
 		profile_bio: { type: String, maxLength: 500 },
-		friends: [{ Type: Schema.Types.ObjectId, ref: "User" }],
-		last_activity: { Type: Date },
+		friends: [{ type: Schema.Types.ObjectId, ref: "User" }],
+		last_activity: { type: Date },
 	},
 	{ timestamps: true },
 );
