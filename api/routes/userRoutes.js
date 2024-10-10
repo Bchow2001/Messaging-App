@@ -14,7 +14,11 @@ router.get(
 		res.send("hello");
 	}),
 );
+
 // Create User POST
 router.post("/", userController.user_create);
+
+// Log In User POST
+router.post("/login", userController.user_login);
 
 module.exports = router;

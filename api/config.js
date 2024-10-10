@@ -29,7 +29,7 @@ passport.use(
 );
 
 passport.use(
-	"jwt-view",
+	"jwt",
 	new JWTStrategy(
 		opts,
 		asyncHandler(async (jwt_payload, done) => {
@@ -41,30 +41,6 @@ passport.use(
 			}
 			if (!user) {
 				return done(null, false, { message: "JWT Token is invalid" });
-			}
-			return done(null, user);
-		}),
-	),
-);
-
-passport.use(
-	"jwt-author",
-	new JWTStrategy(
-		opts,
-		asyncHandler(async (jwt_payload, done) => {
-			const user = await User.findById(jwt_payload._id);
-			if (Date.now() >= jwt_payload.expiresIn * 1000) {
-				return done(null, false, {
-					message: "JWT Token has expired, please log in again",
-				});
-			}
-			if (!user) {
-				return done(null, false, { message: "JWT Token is invalid" });
-			}
-			if (user.isAuthor === false) {
-				return done(null, false, {
-					message: "You are not authorised to post",
-				});
 			}
 			return done(null, user);
 		}),
