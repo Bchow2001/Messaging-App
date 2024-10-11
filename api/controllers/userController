@@ -4,6 +4,7 @@ const { body, validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs");
 const passport = require("passport");
 const jwt = require("jsonwebtoken");
+const mongoose = require("mongoose");
 require("../config");
 
 const User = require("../models/user");
@@ -45,6 +46,11 @@ exports.user_create = [
 		.isLength(2)
 		.withMessage("Last name must be at least 2 characters")
 		.escape(),
+	body("display_name")
+		.trim()
+		.isLength(2)
+		.withMessage("Display name must be at least 2 characters")
+		.escape(),
 	body("profile_bio").trim().escape(),
 
 	asyncHandler(async (req, res, next) => {
@@ -53,6 +59,7 @@ exports.user_create = [
 			username: req.body.username,
 			first_name: req.body.first_name,
 			last_name: req.body.last_name,
+			display_name: req.body.display_name,
 			profile_bio: req.body.profile_bio,
 		});
 
@@ -130,3 +137,32 @@ exports.user_login = [
 		}
 	}),
 ];
+
+exports.add_friend = asyncHandler(async (req, res, next) => {
+	const isValidId = mongoose.Types.ObjectId.isValid(req.params.userid);
+
+	if (!isValidId) {
+		return res.status(400).json("id is not valid");
+	}
+
+	const friend = await User.findById(req.params.userid);
+	const user = await User.findById(req.user.id);
+
+	if (!friend) {
+		res.json({ errors: "User cannot be found" });
+	} else if (req.params.userid === req.user.id) {
+		res.json({ errors: "You cannot add yourself as a friend you sly dog" });
+	} else if (user.friends.includes(req.params.userid)) {
+		res.json({ errors: "User is already a friend" });
+	} else {
+		await User.findByIdAndUpdate(
+			req.user.id,
+			{
+				$push: { friends: req.params.userid },
+			},
+			{},
+		);
+
+		return res.status(200).json({ user });
+	}
+});

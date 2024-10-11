@@ -21,4 +21,10 @@ router.post("/", userController.user_create);
 // Log In User POST
 router.post("/login", userController.user_login);
 
+router.post(
+	"/:userid",
+	passport.authenticate("jwt", { session: false }),
+	userController.add_friend,
+);
+
 module.exports = router;
