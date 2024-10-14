@@ -22,9 +22,33 @@ router.post("/", userController.user_create);
 router.post("/login", userController.user_login);
 
 router.post(
-	"/:userid",
+	"/friends/:userid",
 	passport.authenticate("jwt", { session: false }),
 	userController.add_friend,
+);
+
+router.delete(
+	"/friends/:userid",
+	passport.authenticate("jwt", { session: false }),
+	userController.remove_friend,
+);
+
+router.get(
+	"/:userid",
+	passport.authenticate("jwt", { session: false }),
+	userController.user_details,
+);
+
+router.put(
+	"/:userid",
+	passport.authenticate("jwt", { session: false }),
+	userController.user_update,
+);
+
+router.delete(
+	"/:userid",
+	passport.authenticate("jwt", { session: false }),
+	userController.user_delete,
 );
 
 module.exports = router;
