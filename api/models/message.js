@@ -6,15 +6,15 @@ const MessageSchema = new Schema(
 	{
 		message: { type: String, required: true, maxLength: 128 },
 		image: { type: String },
-		from: { Type: Schema.Types.ObjectId, required: true, ref: "User" },
+		from: { type: Schema.Types.ObjectId, required: true, ref: "User" },
 		to: [
 			{
-				Type: Schema.Types.ObjectId,
+				type: Schema.Types.ObjectId,
 				required: true,
 				refPath: "docModel",
 			},
 		],
-		docModel: { Type: String, required: true, enum: ["Group", "User"] },
+		docModel: { type: String, required: true, enum: ["Group", "User"] },
 	},
 	{ timestamps: true },
 );
