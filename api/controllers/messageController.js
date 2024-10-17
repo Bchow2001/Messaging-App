@@ -22,10 +22,11 @@ exports.inbox = asyncHandler(async (req, res, next) => {
 						from: new mongoose.Types.ObjectId(`${req.user.id}`),
 					},
 					{
-						$in: [
-							new mongoose.Types.ObjectId(`${req.user.id}`),
-							"$to",
-						],
+						to: {
+							$in: [
+								new mongoose.Types.ObjectId(`${req.user.id}`),
+							],
+						},
 					},
 				],
 			},
