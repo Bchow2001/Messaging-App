@@ -7,14 +7,7 @@ const MessageSchema = new Schema(
 		message: { type: String, required: true, maxLength: 128 },
 		image: { type: String },
 		from: { type: Schema.Types.ObjectId, required: true, ref: "User" },
-		to: [
-			{
-				type: Schema.Types.ObjectId,
-				required: true,
-				refPath: "docModel",
-			},
-		],
-		docModel: { type: String, required: true, enum: ["Group", "User"] },
+		to: { type: Schema.Types.ObjectId, required: true, ref: "Chat" },
 	},
 	{ timestamps: true },
 );

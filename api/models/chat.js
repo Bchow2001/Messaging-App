@@ -2,14 +2,14 @@ const mongoose = require("mongoose");
 
 const { Schema } = mongoose;
 
-const GroupSchema = new Schema(
+const ChatSchema = new Schema(
 	{
-		group_name: { Type: String, required: true, maxLength: 128 },
-		group_members: [
+		chat_name: { type: String, required: true, maxLength: 128 },
+		chat_members: [
 			{ Type: Schema.Types.ObjectId, required: true, ref: "User" },
 		],
 	},
 	{ timestamps: true },
 );
 
-module.exports = mongoose.model("Group", GroupSchema);
+module.exports = mongoose.model("Chat", ChatSchema);
