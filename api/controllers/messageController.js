@@ -27,6 +27,18 @@ exports.get_chat = asyncHandler(async (req, res, next) => {
 		return res.status(400).json({ errors: "id is not valid" });
 	}
 
+	const chat = await Chat.findById(req.params.chatid);
+
+	if (!chat) {
+		return res.status(400).json({ errors: "Chat not found" });
+	}
+
+	if (!chat.chat_members.includes(req.user.id)) {
+		return res
+			.status(401)
+			.json({ errors: "You are not authorised to view this chat" });
+	}
+
 	const messages = await Message.find({ to: req.params.chatid }).sort({
 		createdAt: -1,
 	});
@@ -35,7 +47,41 @@ exports.get_chat = asyncHandler(async (req, res, next) => {
 });
 
 // Start Chat POST
-exports.start_chat = [body("")];
+exports.start_chat = [
+	body("users").isArray({ min: 2, max: 258 }).escape(),
+	body("name").trim().notEmpty().escape(),
+
+	asyncHandler(async (req, res, next) => {
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+			return res.status(400).json(errors);
+		}
+
+		const { users } = req.body;
+
+		users.push(req.user.id);
+
+		const validIds = await Promise.all(
+			users.map(async (item) => {
+				const isExistingUser = await User.findById(item);
+				if (isExistingUser) {
+					return item;
+				}
+			}),
+		);
+
+		if (validIds.length <= 1) {
+			res.json({ errors: "Not enough valid users have been selected" });
+		} else {
+			const chat = new Chat({
+				chat_name: req.body.name,
+				chat_members: validIds,
+			});
+			await chat.save();
+			res.status(200).json({ chat });
+		}
+	}),
+];
 
 // Send Message POST
 exports.send_message = [
@@ -49,7 +95,7 @@ exports.send_message = [
 		if (!isValidId) {
 			return res.status(400).json({ errors: "id is not valid" });
 		}
-		if (errors) {
+		if (!errors.isEmpty()) {
 			return res.status(400).json(errors);
 		}
 

@@ -6,7 +6,7 @@ const ChatSchema = new Schema(
 	{
 		chat_name: { type: String, required: true, maxLength: 128 },
 		chat_members: [
-			{ Type: Schema.Types.ObjectId, required: true, ref: "User" },
+			{ type: Schema.Types.ObjectId, required: true, ref: "User" },
 		],
 	},
 	{ timestamps: true },

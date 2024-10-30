@@ -9,13 +9,25 @@ const messageController = require("../controllers/messageController");
 router.get(
 	"/",
 	passport.authenticate("jwt", { session: false }),
-	messageController.inbox,
+	messageController.get_inbox,
 );
 
 router.post(
-	"/user/:userid",
+	"/",
 	passport.authenticate("jwt", { session: false }),
-	messageController.send_message_user,
+	messageController.start_chat,
+);
+
+router.get(
+	"/:chatid",
+	passport.authenticate("jwt", { session: false }),
+	messageController.get_chat,
+);
+
+router.post(
+	"/:chatid",
+	passport.authenticate("jwt", { session: false }),
+	messageController.send_message,
 );
 
 module.exports = router;
