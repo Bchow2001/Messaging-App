@@ -103,6 +103,10 @@ exports.send_message = [
 
 		if (!chat) {
 			res.json({ errors: "Chat cannot be found" });
+		} else if (!chat.chat_members.includes(req.user.id)) {
+			res.status(401).json({
+				errors: "You are not authorised to send messages to this chat",
+			});
 		} else {
 			const message = new Message({
 				message: req.body.message,
