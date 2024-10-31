@@ -3,10 +3,8 @@ import {
 	RouterProvider,
 	Navigate,
 } from "react-router-dom";
-import App from "./App";
-import LogIn from "./components/LogIn";
 import Register from "./components/Register";
-import ErrorPage from "./components/ErrorPage";
+import LogIn from "./components/LogIn";
 import "./index.css";
 
 const Router = () => {
@@ -14,12 +12,11 @@ const Router = () => {
 		{
 			path: "/",
 			element: <Navigate to="/messages" />,
-			errorElement: <ErrorPage />,
+			// errorElement: <ErrorPage />,
 		},
-		{ path: "/messages", element: <App /> },
-		{ path: "/users/logIn", element: <LogIn /> },
-		{ path: "/users/register", element: <Register /> },
-		{ path: "/error", element: <ErrorPage /> },
+
+		{ path: "/register", element: <Register /> },
+		{ path: "/login", element: <LogIn /> },
 	]);
 	return <RouterProvider router={router} />;
 };
