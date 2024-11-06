@@ -31,7 +31,6 @@ function LogIn() {
 				setPassword("");
 				setError("");
 				setUser(true);
-				console.log(access);
 			} else {
 				setPassword("");
 				setError(response.message);
@@ -69,7 +68,7 @@ function LogIn() {
 				<button type="submit">Submit</button>
 			</form>
 			<div>{error !== "" && <p>{error}</p>}</div>
-			{user && console.log(user)}
+			{user && <Navigate to="/inbox" />}
 		</>
 	);
 }
