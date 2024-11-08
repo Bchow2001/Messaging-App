@@ -1,5 +1,5 @@
-import { useEffect, useLayoutEffect, useState } from "react";
-import { Link, Navigate, useParams, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 
 function ChatItem({ chat }) {
 	return (

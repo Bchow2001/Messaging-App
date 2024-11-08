@@ -6,6 +6,7 @@ import {
 import Register from "./components/Register";
 import LogIn from "./components/LogIn";
 import Inbox from "./components/Inbox";
+import Chat from "./components/Chat";
 import "./index.css";
 
 const Router = () => {
@@ -19,6 +20,7 @@ const Router = () => {
 		{ path: "/register", element: <Register /> },
 		{ path: "/login", element: <LogIn /> },
 		{ path: "/inbox", element: <Inbox /> },
+		{ path: "/inbox/:chatid", element: <Chat /> },
 	]);
 	return <RouterProvider router={router} />;
 };
