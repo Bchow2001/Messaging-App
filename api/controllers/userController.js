@@ -74,7 +74,7 @@ exports.user_create = [
 				} else {
 					user.password = hashedPassword;
 					await user.save();
-					res.status(200).json({ user });
+					res.status(200).json("User created");
 				}
 			});
 		}

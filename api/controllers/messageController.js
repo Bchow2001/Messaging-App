@@ -16,7 +16,9 @@ exports.get_inbox = asyncHandler(async (req, res, next) => {
 
 	const chats = await Chat.find({ chat_members: req.user.id });
 
-	return res.status(200).json({ chats });
+	const { user } = req;
+
+	return res.status(200).json({ chats, user });
 });
 
 // Get Chat Messages GET
@@ -27,23 +29,32 @@ exports.get_chat = asyncHandler(async (req, res, next) => {
 		return res.status(400).json({ errors: "id is not valid" });
 	}
 
-	const chat = await Chat.findById(req.params.chatid);
+	const chat = await Chat.findById(req.params.chatid).populate(
+		"chat_members",
+		"display_name",
+	);
+	const user = await User.findById(req.user.id, "_id");
 
 	if (!chat) {
 		return res.status(400).json({ errors: "Chat not found" });
 	}
 
-	if (!chat.chat_members.includes(req.user.id)) {
+	if (!chat.chat_members.find((e) => e._id.toString() === req.user.id)) {
 		return res
 			.status(401)
 			.json({ errors: "You are not authorised to view this chat" });
 	}
 
-	const messages = await Message.find({ to: req.params.chatid }).sort({
-		createdAt: -1,
-	});
+	const messages = await Message.find(
+		{ to: req.params.chatid },
+		"message from createdAt",
+	)
+		.populate("from", "display_name -_id")
+		.sort({
+			createdAt: 1,
+		});
 
-	return res.status(200).json(messages);
+	return res.status(200).json({ messages, user, chat });
 });
 
 // Start Chat POST
