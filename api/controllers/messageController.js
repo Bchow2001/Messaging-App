@@ -1,6 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const { body, validationResult } = require("express-validator");
 const mongoose = require("mongoose");
+const moment = require("moment");
 
 const Message = require("../models/message");
 const User = require("../models/user");
@@ -53,6 +54,12 @@ exports.get_chat = asyncHandler(async (req, res, next) => {
 		.sort({
 			createdAt: 1,
 		});
+
+	messages.forEach((item, index) => {
+		const momentDate = moment(item.createdAt);
+		const formattedDate = momentDate.format("lll");
+		messages[index] = { ...item.toObject(), createdAt: formattedDate };
+	});
 
 	return res.status(200).json({ messages, user, chat });
 });
