@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
+import StartChat from "./StartChat";
 
 function ChatItem({ chat }) {
 	return (
@@ -62,6 +63,7 @@ function Inbox() {
 			<>
 				<h1>Inbox</h1>
 				{chats != null && <ChatsList chats={chats} />}
+				<StartChat user={user} />
 			</>
 		);
 	} else {

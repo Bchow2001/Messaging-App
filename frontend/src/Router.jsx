@@ -13,7 +13,7 @@ const Router = () => {
 	const router = createBrowserRouter([
 		{
 			path: "/",
-			element: <Navigate to="/messages" />,
+			element: <Navigate to="/inbox" />,
 			// errorElement: <ErrorPage />,
 		},
 

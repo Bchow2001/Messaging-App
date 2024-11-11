@@ -2,10 +2,11 @@ import { useState, useEffect } from "react";
 import { Navigate, useParams, useNavigate } from "react-router-dom";
 
 function MessageItem({ message, userId }) {
-	if (message._id === userId) {
+	if (message.from._id === userId) {
 		return (
 			<div className="from">
-				<h3 className="message">{message.messsage}</h3>
+				<h3 className="message">{message.message}</h3>
+				<h5 className="time">{message.createdAt}</h5>
 			</div>
 		);
 	} else {
@@ -75,7 +76,7 @@ function Messages() {
 			}
 		}
 		fetchMessage();
-	}, [navigate]);
+	}, [navigate, chatid]);
 
 	if (userId) {
 		return (
