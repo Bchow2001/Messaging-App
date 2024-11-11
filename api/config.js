@@ -33,9 +33,9 @@ passport.use(
 	new JWTStrategy(
 		opts,
 		asyncHandler(async (jwt_payload, done) => {
-			const user = await User.findById(jwt_payload._id).select([
-				"-password",
-			]);
+			const user = await User.findById(jwt_payload._id)
+				.select(["-password"])
+				.populate("friends", "display_name");
 			if (Date.now() >= jwt_payload.expiresIn * 1000) {
 				return done(null, false, {
 					message: "JWT Token has expired, please log in again",

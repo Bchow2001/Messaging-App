@@ -19,6 +19,8 @@ exports.get_inbox = asyncHandler(async (req, res, next) => {
 
 	const { user } = req;
 
+	console.log(user);
+
 	return res.status(200).json({ chats, user });
 });
 
@@ -50,7 +52,7 @@ exports.get_chat = asyncHandler(async (req, res, next) => {
 		{ to: req.params.chatid },
 		"message from createdAt",
 	)
-		.populate("from", "display_name -_id")
+		.populate("from", "display_name")
 		.sort({
 			createdAt: 1,
 		});
