@@ -39,8 +39,7 @@ function FriendsList({ friends, handleCheck }) {
 function StartChat({ user }) {
 	const [chatUserIds, setChatUserIds] = useState([]);
 	const [chatName, setChatName] = useState("");
-
-	const navigate = useNavigate();
+	const [errors, setErrors] = useState([]);
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
@@ -57,7 +56,6 @@ function StartChat({ user }) {
 				chatName: name,
 			}),
 		};
-		console.log(requestOptions);
 		try {
 			let response = await fetch(
 				"http://localhost:3000/messages",
@@ -65,8 +63,10 @@ function StartChat({ user }) {
 			);
 			if (response.status === 200) {
 				response = await response.json();
-			} else {
-				console.log("no");
+				window.location.reload();
+			} else if (response.status === 400) {
+				response = await response.json();
+				setErrors(response.errors);
 			}
 		} catch (e) {
 			console.log(e);
@@ -112,6 +112,13 @@ function StartChat({ user }) {
 						<button type="submit">Submit</button>
 					)}
 				</form>
+				<div>
+					{errors.length !== 0 &&
+						errors.map((error) => {
+							return <p key={error.path}>{error.msg}</p>;
+						})}
+				</div>
+				{console.log(errors)}
 			</>
 		);
 	} else {

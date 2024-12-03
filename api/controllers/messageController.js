@@ -66,8 +66,15 @@ exports.get_chat = asyncHandler(async (req, res, next) => {
 
 // Start Chat POST
 exports.start_chat = [
-	body("users").isArray({ min: 1, max: 258 }).escape(),
-	body("chatName").trim().notEmpty().escape(),
+	body("users")
+		.isArray({ min: 1, max: 258 })
+		.withMessage("You must select at least one friend to chat with")
+		.escape(),
+	body("chatName")
+		.trim()
+		.notEmpty()
+		.withMessage("Chat name must not be empty")
+		.escape(),
 
 	asyncHandler(async (req, res, next) => {
 		const errors = validationResult(req);
@@ -77,7 +84,31 @@ exports.start_chat = [
 
 		const { users } = req.body;
 
+		let { chatName } = req.body;
+
+		// Add requesting user to chat
 		users.push(req.user.id);
+
+		// Handle if there is only one user selected
+		if (users.length === 2) {
+			const chatExists = await Chat.findOne({ chat_members: users });
+
+			if (chatExists) {
+				return res.status(400).json({
+					errors: [
+						{
+							msg: "Chat with this user already exists.",
+							path: "chatExists",
+						},
+					],
+				});
+			}
+
+			const displayName = await User.findById(users[0]).select(
+				"display_name -_id",
+			);
+			chatName = displayName.display_name;
+		}
 
 		const validIds = await Promise.all(
 			users.map(async (item) => {
@@ -89,10 +120,17 @@ exports.start_chat = [
 		);
 
 		if (validIds.length <= 1) {
-			res.json({ errors: "Not enough valid users have been selected" });
+			res.status(400).json({
+				errors: [
+					{
+						msg: "Not enough valid users have been selected",
+						path: "validUsers",
+					},
+				],
+			});
 		} else {
 			const chat = new Chat({
-				chat_name: req.body.chatName,
+				chat_name: chatName,
 				chat_members: validIds,
 			});
 			await chat.save();
