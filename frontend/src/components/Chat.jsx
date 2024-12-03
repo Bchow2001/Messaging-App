@@ -54,7 +54,7 @@ function Messages() {
 				let response = await fetch(
 					`http://localhost:3000/messages/${chatid}`,
 					{
-						method: "Get",
+						method: "GET",
 						headers: new Headers({
 							Authorization: `Bearer ${localStorage.getItem(
 								"accessToken",

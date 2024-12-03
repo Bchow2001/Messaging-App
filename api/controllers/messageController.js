@@ -19,8 +19,6 @@ exports.get_inbox = asyncHandler(async (req, res, next) => {
 
 	const { user } = req;
 
-	console.log(user);
-
 	return res.status(200).json({ chats, user });
 });
 
@@ -68,8 +66,8 @@ exports.get_chat = asyncHandler(async (req, res, next) => {
 
 // Start Chat POST
 exports.start_chat = [
-	body("users").isArray({ min: 2, max: 258 }).escape(),
-	body("name").trim().notEmpty().escape(),
+	body("users").isArray({ min: 1, max: 258 }).escape(),
+	body("chatName").trim().notEmpty().escape(),
 
 	asyncHandler(async (req, res, next) => {
 		const errors = validationResult(req);
@@ -94,7 +92,7 @@ exports.start_chat = [
 			res.json({ errors: "Not enough valid users have been selected" });
 		} else {
 			const chat = new Chat({
-				chat_name: req.body.name,
+				chat_name: req.body.chatName,
 				chat_members: validIds,
 			});
 			await chat.save();
