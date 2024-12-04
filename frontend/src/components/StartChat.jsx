@@ -118,13 +118,11 @@ function StartChat({ user }) {
 							return <p key={error.path}>{error.msg}</p>;
 						})}
 				</div>
-				{console.log(errors)}
 			</>
 		);
 	} else {
 		<Navigate to="/login" />;
 	}
-	console.log(user);
 }
 
 export default StartChat;

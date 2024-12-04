@@ -7,7 +7,7 @@ const Message = require("../models/message");
 const User = require("../models/user");
 const Chat = require("../models/chat");
 
-// Get Inbox GET
+// Get Inbox GET x
 exports.get_inbox = asyncHandler(async (req, res, next) => {
 	const isValidId = mongoose.Types.ObjectId.isValid(req.user.id);
 
@@ -22,7 +22,7 @@ exports.get_inbox = asyncHandler(async (req, res, next) => {
 	return res.status(200).json({ chats, user });
 });
 
-// Get Chat Messages GET
+// Get Chat Messages GET x
 exports.get_chat = asyncHandler(async (req, res, next) => {
 	const isValidId = mongoose.Types.ObjectId.isValid(req.params.chatid);
 
@@ -64,7 +64,7 @@ exports.get_chat = asyncHandler(async (req, res, next) => {
 	return res.status(200).json({ messages, user, chat });
 });
 
-// Start Chat POST
+// Start Chat POST x
 exports.start_chat = [
 	body("users")
 		.isArray({ min: 1, max: 258 })
@@ -149,7 +149,14 @@ exports.send_message = [
 		const isValidId = mongoose.Types.ObjectId.isValid(req.params.chatid);
 
 		if (!isValidId) {
-			return res.status(400).json({ errors: "id is not valid" });
+			return res.status(400).json({
+				errors: [
+					{
+						msg: "Chat ID is invalid",
+						path: "chatid",
+					},
+				],
+			});
 		}
 		if (!errors.isEmpty()) {
 			return res.status(400).json(errors);
@@ -158,10 +165,22 @@ exports.send_message = [
 		const chat = await Chat.findById(req.params.chatid);
 
 		if (!chat) {
-			res.json({ errors: "Chat cannot be found" });
+			res.status(400).json({
+				errors: [
+					{
+						msg: "Chat cannot be found",
+						path: "chat",
+					},
+				],
+			});
 		} else if (!chat.chat_members.includes(req.user.id)) {
 			res.status(401).json({
-				errors: "You are not authorised to send messages to this chat",
+				errors: [
+					{
+						msg: "You are not part of this chat",
+						path: "notinchat",
+					},
+				],
 			});
 		} else {
 			const message = new Message({

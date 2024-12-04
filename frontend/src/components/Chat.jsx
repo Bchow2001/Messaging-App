@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { Navigate, useParams, useNavigate } from "react-router-dom";
+import { Navigate, useParams, useNavigate, Link } from "react-router-dom";
+import SendMessage from "./SendMessage";
 
 function MessageItem({ message, userId }) {
 	if (message.from._id === userId) {
@@ -81,10 +82,12 @@ function Messages() {
 	if (userId) {
 		return (
 			<>
+				<Link to="/inbox">Back to Inbox</Link>
 				<h1>{chat != null && chat.chat_name}</h1>
 				{messages != null && (
 					<MessageList messages={messages} userId={userId} />
 				)}
+				<SendMessage />
 			</>
 		);
 	} else {

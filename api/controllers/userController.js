@@ -9,7 +9,7 @@ require("../config");
 
 const User = require("../models/user");
 
-// Create User POST
+// Create User POST x
 exports.user_create = [
 	body("username")
 		.trim()
@@ -81,7 +81,7 @@ exports.user_create = [
 	}),
 ];
 
-// Log in User POST
+// Log in User POST x
 exports.user_login = [
 	body("username")
 		.trim()
