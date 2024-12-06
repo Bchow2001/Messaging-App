@@ -7,6 +7,7 @@ import Register from "./components/Register";
 import LogIn from "./components/LogIn";
 import Inbox from "./components/Inbox";
 import Chat from "./components/Chat";
+import Profile from "./components/Profile";
 import "./index.css";
 
 const Router = () => {
@@ -21,6 +22,7 @@ const Router = () => {
 		{ path: "/login", element: <LogIn /> },
 		{ path: "/inbox", element: <Inbox /> },
 		{ path: "/inbox/:chatid", element: <Chat /> },
+		{ path: "/profile/:userid", element: <Profile /> },
 	]);
 	return <RouterProvider router={router} />;
 };

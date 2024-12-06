@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 function Register() {
 	const [username, setUsername] = useState("");
 	const [password, setPassword] = useState("");
@@ -118,6 +118,7 @@ function Register() {
 				</div>
 				<button type="submit">Submit</button>
 			</form>
+			<Link to="/login"> Login</Link>
 			<div>
 				{errors.length !== 0 &&
 					errors.map((error) => {

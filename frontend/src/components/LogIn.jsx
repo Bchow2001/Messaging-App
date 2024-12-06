@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, Link } from "react-router-dom";
 
 function LogIn() {
 	const [username, setUsername] = useState("");
@@ -42,6 +42,7 @@ function LogIn() {
 
 	return (
 		<>
+			<Link to="/register">Register!</Link>
 			<form onSubmit={handleSubmit}>
 				<div className="form-group">
 					<label htmlFor="username">Username: </label>
@@ -67,6 +68,7 @@ function LogIn() {
 				</div>
 				<button type="submit">Submit</button>
 			</form>
+
 			<div>{error !== "" && <p>{error}</p>}</div>
 			{user && <Navigate to="/inbox" />}
 		</>

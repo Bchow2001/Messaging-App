@@ -5,6 +5,8 @@ const bcrypt = require("bcryptjs");
 const passport = require("passport");
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
+const moment = require("moment");
+
 require("../config");
 
 const User = require("../models/user");
@@ -15,6 +17,7 @@ exports.user_create = [
 		.trim()
 		.isLength(6)
 		.withMessage("Username must be at least 6 characters")
+		.isAlphanumeric()
 		.custom(async (value) => {
 			const userExists = await User.findOne({
 				username: value,
@@ -29,29 +32,27 @@ exports.user_create = [
 	body("password")
 		.trim()
 		.isLength(8)
-		.withMessage("Password must be at least 8 characters")
-		.escape(),
+		.withMessage("Password must be at least 8 characters"),
 	body("confirm_password")
 		.trim()
 		.custom((value, { req }) => value === req.body.password)
-		.withMessage("Passwords must match")
-		.escape(),
+		.withMessage("Passwords must match"),
 	body("first_name")
 		.trim()
 		.isLength(2)
 		.withMessage("First name must be at least 2 characters")
-		.escape(),
+		.isAlpha(),
 	body("last_name")
 		.trim()
 		.isLength(2)
 		.withMessage("Last name must be at least 2 characters")
-		.escape(),
+		.isAlpha(),
 	body("display_name")
 		.trim()
 		.isLength(2)
 		.withMessage("Display name must be at least 2 characters")
-		.escape(),
-	body("profile_bio").trim().escape(),
+		.isAlphanumeric(),
+	body("profile_bio").trim(),
 
 	asyncHandler(async (req, res, next) => {
 		const errors = validationResult(req);
@@ -143,16 +144,24 @@ exports.user_details = asyncHandler(async (req, res, next) => {
 	const isValidId = mongoose.Types.ObjectId.isValid(req.params.userid);
 
 	if (!isValidId) {
-		return res.status(400).json({ errors: "id is not valid" });
+		return res.status(400).json({
+			errors: [{ msg: "User Id is invalid", path: "invalidid" }],
+		});
 	}
 
-	const user = await User.findById(req.params.userid).select(["-password"]);
-	const reqUser = req.user;
+	let reqUser = await User.findById(req.params.userid).select(["-password"]);
+	const { user } = req;
 
-	if (!user) {
-		res.json({ errors: "User cannot be found" });
+	const momentDate = moment(reqUser.createdAt);
+	const formattedDate = momentDate.format("lll");
+	reqUser = { ...reqUser.toObject(), createdAt: formattedDate };
+
+	if (!reqUser) {
+		res.status(400).json({
+			errors: [{ msg: "User cannot be found", path: "noUser" }],
+		});
 	} else {
-		return res.status(200).json({ user, reqUser });
+		return res.status(200).json({ reqUser, user });
 	}
 });
 

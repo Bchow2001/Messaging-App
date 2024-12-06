@@ -33,6 +33,7 @@ router.delete(
 	userController.remove_friend,
 );
 
+// /user/:userid
 router.get(
 	"/:userid",
 	passport.authenticate("jwt", { session: false }),
