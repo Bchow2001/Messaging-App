@@ -9,6 +9,7 @@ import Inbox from "./components/Inbox";
 import Chat from "./components/Chat";
 import Profile from "./components/Profile";
 import "./index.css";
+import AddFriends from "./components/AddFriend";
 
 const Router = () => {
 	const router = createBrowserRouter([
@@ -21,6 +22,7 @@ const Router = () => {
 		{ path: "/register", element: <Register /> },
 		{ path: "/login", element: <LogIn /> },
 		{ path: "/inbox", element: <Inbox /> },
+		{ path: "/addfriend", element: <AddFriends /> },
 		{ path: "/inbox/:chatid", element: <Chat /> },
 		{ path: "/profile/:userid", element: <Profile /> },
 	]);

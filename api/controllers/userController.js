@@ -27,8 +27,7 @@ exports.user_create = [
 			if (userExists) {
 				throw new Error("Username is already in use");
 			}
-		})
-		.escape(),
+		}),
 	body("password")
 		.trim()
 		.isLength(8)
@@ -139,7 +138,7 @@ exports.user_login = [
 	}),
 ];
 
-// Single User details GET
+// Single User details GET x
 exports.user_details = asyncHandler(async (req, res, next) => {
 	const isValidId = mongoose.Types.ObjectId.isValid(req.params.userid);
 
@@ -248,6 +247,37 @@ exports.user_delete = asyncHandler(async (req, res, next) => {
 		return res.status(200).json({ message: "User has been deleted" });
 	}
 });
+
+// Find Friend POST
+exports.find_friend = [
+	body("username")
+		.trim()
+		.isLength(6)
+		.withMessage("Username must be at least 6 characters")
+		.isAlphanumeric(),
+
+	asyncHandler(async (req, res, next) => {
+		const errors = validationResult(req);
+
+		if (!errors.isEmpty()) {
+			res.status(403).json(errors);
+		}
+
+		const user = await User.findOne({ username: req.body.username }).select(
+			"-password",
+		);
+
+		if (!user) {
+			return res.status(403).json({
+				errors: [{ msg: "User cannot be found", path: "noUser" }],
+			});
+		}
+
+		console.log(user);
+
+		return res.status(200).json(user);
+	}),
+];
 
 // Add user as friend POST
 exports.add_friend = asyncHandler(async (req, res, next) => {

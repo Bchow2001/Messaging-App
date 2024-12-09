@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Navigate, useParams, useNavigate } from "react-router-dom";
+import { Navigate, useParams, useNavigate, Link } from "react-router-dom";
 
 function FriendsItem({ friend, handleCheck }) {
 	return (
@@ -10,7 +10,9 @@ function FriendsItem({ friend, handleCheck }) {
 				id={friend._id}
 				onChange={handleCheck}
 			/>
-			<label htmlFor={friend._id}>{friend.display_name}</label>
+			<Link to={`/profile/${friend._id}`}>
+				<label htmlFor={friend._id}>{friend.display_name}</label>
+			</Link>
 		</div>
 	);
 }

@@ -22,6 +22,12 @@ router.post("/", userController.user_create);
 router.post("/login", userController.user_login);
 
 router.post(
+	"/friends",
+	passport.authenticate("jwt", { session: false }),
+	userController.find_friend,
+);
+
+router.post(
 	"/friends/:userid",
 	passport.authenticate("jwt", { session: false }),
 	userController.add_friend,
