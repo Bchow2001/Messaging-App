@@ -63,6 +63,8 @@ function Inbox() {
 			<>
 				<h1>Inbox</h1>
 				<Link to={`/profile/${user._id}`}>{user.display_name}</Link>
+				<br />
+				<Link to={`/addfriend`}>Add Friends!</Link>
 				{chats != null && <ChatsList chats={chats} />}
 				<StartChat user={user} />
 			</>

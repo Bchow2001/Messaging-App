@@ -248,7 +248,7 @@ exports.user_delete = asyncHandler(async (req, res, next) => {
 	}
 });
 
-// Find Friend POST
+// Find Friend POST x
 exports.find_friend = [
 	body("username")
 		.trim()
@@ -260,7 +260,7 @@ exports.find_friend = [
 		const errors = validationResult(req);
 
 		if (!errors.isEmpty()) {
-			res.status(403).json(errors);
+			return res.status(403).json(errors);
 		}
 
 		const user = await User.findOne({ username: req.body.username }).select(
@@ -273,34 +273,54 @@ exports.find_friend = [
 			});
 		}
 
-		console.log(user);
+		const reqUser = req.user;
 
-		return res.status(200).json(user);
+		return res.status(200).json({ user, reqUser });
 	}),
 ];
 
 // Add user as friend POST
 exports.add_friend = asyncHandler(async (req, res, next) => {
-	const isValidId = mongoose.Types.ObjectId.isValid(req.params.userid);
+	console.log(req.body.userId);
+	const isValidId = mongoose.Types.ObjectId.isValid(req.body.userId);
 
 	if (!isValidId) {
-		return res.status(400).json({ errors: "id is not valid" });
+		return res
+			.status(403)
+			.json({ errors: [{ msg: "Invalid ID", path: "invalidId" }] });
 	}
 
-	const friend = await User.findById(req.params.userid);
+	const friend = await User.findById(req.body.userId);
 	const user = await User.findById(req.user.id);
 
 	if (!friend) {
-		res.json({ errors: "User cannot be found" });
-	} else if (req.params.userid === req.user.id) {
-		res.json({ errors: "You cannot add yourself as a friend you sly dog" });
-	} else if (user.friends.includes(req.params.userid)) {
-		res.json({ errors: "User is already a friend" });
+		res.status(403).json({
+			errors: [{ msg: "User cannot be found", path: "noUser" }],
+		});
+	} else if (!user) {
+		res.status(400).json({
+			errors: [{ msg: "User cannot be found", path: "noUser" }],
+		});
+	} else if (req.body.userId === req.user.id) {
+		res.status(403).json({
+			errors: [
+				{
+					msg: "You cannot add yourself as a friend, you sly dog",
+					path: "duplicateUser",
+				},
+			],
+		});
+	} else if (user.friends.includes(req.body.userId)) {
+		res.status(403).json({
+			errors: [
+				{ msg: "User is already a friend", path: "duplicateFriend" },
+			],
+		});
 	} else {
 		await User.findByIdAndUpdate(
 			req.user.id,
 			{
-				$push: { friends: req.params.userid },
+				$push: { friends: req.body.userId },
 			},
 			{},
 		);
