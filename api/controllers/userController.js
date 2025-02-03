@@ -166,32 +166,19 @@ exports.user_details = asyncHandler(async (req, res, next) => {
 
 // Update User PUT
 exports.user_update = [
-	body("password")
-		.trim()
-		.isLength(8)
-		.withMessage("Password must be at least 8 characters")
-		.escape(),
-	body("confirm_password")
-		.trim()
-		.custom((value, { req }) => value === req.body.password)
-		.withMessage("Passwords must match")
-		.escape(),
 	body("first_name")
 		.trim()
 		.isLength(2)
-		.withMessage("First name must be at least 2 characters")
-		.escape(),
+		.withMessage("First name must be at least 2 characters"),
 	body("last_name")
 		.trim()
 		.isLength(2)
-		.withMessage("Last name must be at least 2 characters")
-		.escape(),
+		.withMessage("Last name must be at least 2 characters"),
 	body("display_name")
 		.trim()
 		.isLength(2)
-		.withMessage("Display name must be at least 2 characters")
-		.escape(),
-	body("profile_bio").trim().escape(),
+		.withMessage("Display name must be at least 2 characters"),
+	body("profile_bio").trim(),
 
 	asyncHandler(async (req, res, next) => {
 		const errors = validationResult(req);
@@ -210,19 +197,23 @@ exports.user_update = [
 		});
 
 		if (req.params.userid !== req.user.id) {
-			res.json({ errors: "You cannot update another user" });
+			res.status(400).json({ errors: "You cannot update another user" });
 		} else if (!errors.isEmpty()) {
-			res.json(errors);
+			res.status(400).json(errors);
 		} else {
-			bcrypt.hash(req.body.password, 10, async (err, hashedPassword) => {
-				if (err) {
-					next(err);
-				} else {
-					user.password = hashedPassword;
-					await User.findByIdAndUpdate(req.params.userid, user, {});
-					res.status(200).json({ message: "User updated" });
-				}
-			});
+			await User.findByIdAndUpdate(
+				req.params.userid,
+				{
+					$set: {
+						first_name: user.first_name,
+						last_name: user.last_name,
+						display_name: user.display_name,
+						profile_bio: user.profile_bio,
+					},
+				},
+				{},
+			);
+			res.status(200).json({ message: "User updated" });
 		}
 	}),
 ];
@@ -279,7 +270,7 @@ exports.find_friend = [
 	}),
 ];
 
-// Add user as friend POST
+// Add user as friend POST x
 exports.add_friend = asyncHandler(async (req, res, next) => {
 	console.log(req.body.userId);
 	const isValidId = mongoose.Types.ObjectId.isValid(req.body.userId);

@@ -1,26 +1,23 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-function Register() {
-	const [username, setUsername] = useState("");
-	const [password, setPassword] = useState("");
-	const [confirm, setConfirm] = useState("");
-	const [first, setFirst] = useState("");
-	const [last, setLast] = useState("");
-	const [display, setDisplay] = useState("");
-	const [profile, setProfile] = useState("");
+function UpdateUser({ initialUser, setEditing }) {
+	const [first, setFirst] = useState(initialUser.first_name);
+	const [last, setLast] = useState(initialUser.last_name);
+	const [display, setDisplay] = useState(initialUser.display_name);
+	const [profile, setProfile] = useState(initialUser.profile_bio);
 	const [errors, setErrors] = useState([]);
 	const navigate = useNavigate();
 
-	const handleRegister = async (e) => {
+	const handleUpdate = async (e) => {
 		e.preventDefault();
 		const requestOptions = {
-			method: "Post",
-			headers: { "Content-Type": "application/json" },
+			method: "PUT",
+			headers: new Headers({
+				Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+				"Content-Type": "application/json",
+			}),
 			mode: "cors",
 			body: JSON.stringify({
-				username: username,
-				password: password,
-				confirm_password: confirm,
 				first_name: first,
 				last_name: last,
 				display_name: display,
@@ -29,16 +26,15 @@ function Register() {
 		};
 		try {
 			let response = await fetch(
-				"http://localhost:3000/user",
+				`http://localhost:3000/user/${initialUser._id}`,
 				requestOptions,
 			);
-			if (response.status === 403) {
+			if (response.status === 400) {
 				response = await response.json();
-				setPassword("");
-				setConfirm("");
 				setErrors(response.errors);
 			} else if (response.status === 200) {
-				navigate("/login");
+				setEditing(false);
+				navigate(`/profile/${initialUser._id}`);
 				console.log("Done!");
 			}
 		} catch (e) {
@@ -47,18 +43,8 @@ function Register() {
 	};
 	return (
 		<>
-			<form onSubmit={handleRegister}>
-				<div className="form-group">
-					<label htmlFor="username">Username:</label>
-					<input
-						type="input"
-						name="username"
-						id="username"
-						value={username}
-						onChange={(e) => setUsername(e.target.value)}
-					/>
-					<span>This cannot be edited in the future</span>
-				</div>
+			<form onSubmit={handleUpdate}>
+				<h1>Username: {initialUser.username}</h1>
 				<div className="form-group">
 					<label htmlFor="display">Display Name:</label>
 					<input
@@ -82,24 +68,6 @@ function Register() {
 					/>
 				</div>
 				<div className="form-group">
-					<label htmlFor="password">Password:</label>
-					<input
-						type="password"
-						name="password"
-						id="password"
-						value={password}
-						onChange={(e) => setPassword(e.target.value)}
-					/>
-					<label htmlFor="confirm">Confirm Password:</label>
-					<input
-						type="password"
-						name="confirm"
-						id="confirm"
-						value={confirm}
-						onChange={(e) => setConfirm(e.target.value)}
-					/>
-				</div>
-				<div className="form-group">
 					<label htmlFor="first">First Name:</label>
 					<input
 						type="text"
@@ -117,9 +85,15 @@ function Register() {
 						onChange={(e) => setLast(e.target.value)}
 					/>
 				</div>
-				<button type="submit">Submit</button>
+				<button type="submit">Save Changes</button>
 			</form>
-			<Link to="/login"> Login</Link>
+			<button
+				onClick={(e) => {
+					setEditing(false);
+				}}
+			>
+				Cancel
+			</button>
 			<div>
 				{errors.length !== 0 &&
 					errors.map((error) => {
@@ -130,4 +104,4 @@ function Register() {
 	);
 }
 
-export default Register;
+export default UpdateUser;

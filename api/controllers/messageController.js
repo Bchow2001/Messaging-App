@@ -139,9 +139,9 @@ exports.start_chat = [
 	}),
 ];
 
-// Send Message POST
+// Send Message POST x
 exports.send_message = [
-	body("message").trim().notEmpty().escape(),
+	body("message").trim().notEmpty(),
 
 	asyncHandler(async (req, res, next) => {
 		const errors = validationResult(req);

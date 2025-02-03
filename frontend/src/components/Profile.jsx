@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useParams, Navigate } from "react-router-dom";
+import { useNavigate, useParams, Navigate, Link } from "react-router-dom";
+import UpdateUser from "./UpdateUser";
 
 function Profile() {
 	const [user, setUser] = useState(null);
 	const [reqUser, setReqUser] = useState(null);
 	const [errors, setErrors] = useState([]);
+	const [editing, setEditing] = useState(false);
 	const { userid } = useParams();
 
 	const navigate = useNavigate();
@@ -29,11 +31,9 @@ function Profile() {
 					response = await response.json();
 					setUser(response.user);
 					setReqUser(response.reqUser);
-					console.log(response);
 				} else if (response.status === 400) {
 					response = await response.json();
 					setErrors(response.errors);
-					console.log(response);
 				} else {
 					navigate("/login");
 				}
@@ -42,19 +42,35 @@ function Profile() {
 			}
 		}
 		fetchProfile();
-	}, [navigate, userid]);
+	}, [navigate, userid, editing]);
 
 	return (
 		<>
 			<h1>Profile</h1>
 			{reqUser && (
 				<>
-					<h1>{reqUser.display_name}</h1>
-					<h2>
-						Name: {reqUser.first_name} {reqUser.last_name}
-					</h2>
-					<h3>Bio: {reqUser.profile_bio}</h3>
-					<h4>Joined at: {reqUser.createdAt}</h4>
+					{!editing ? (
+						<>
+							<h1>{reqUser.display_name}</h1>
+							<h2>
+								Name: {reqUser.first_name} {reqUser.last_name}
+							</h2>
+							<h3>Bio: {reqUser.profile_bio}</h3>
+							<h4>Joined at: {reqUser.createdAt}</h4>
+							<h4>User Name: {reqUser.username}</h4>
+							{user._id === reqUser._id && (
+								<button onClick={(e) => setEditing(true)}>
+									Edit profile
+								</button>
+							)}
+							<Link to="/inbox">Inbox</Link>
+						</>
+					) : (
+						<UpdateUser
+							initialUser={user}
+							setEditing={setEditing}
+						/>
+					)}
 				</>
 			)}
 			<div>
