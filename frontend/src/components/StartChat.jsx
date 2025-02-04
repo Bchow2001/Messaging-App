@@ -43,6 +43,8 @@ function StartChat({ user }) {
 	const [chatName, setChatName] = useState("");
 	const [errors, setErrors] = useState([]);
 
+	const navigate = useNavigate();
+
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		const name = chatUserIds.length > 1 ? chatName : chatUserIds[0];
@@ -65,7 +67,7 @@ function StartChat({ user }) {
 			);
 			if (response.status === 200) {
 				response = await response.json();
-				window.location.reload();
+				navigate(`/inbox/${response._id}`);
 			} else if (response.status === 400) {
 				response = await response.json();
 				setErrors(response.errors);

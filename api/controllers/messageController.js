@@ -134,7 +134,7 @@ exports.start_chat = [
 				chat_members: validIds,
 			});
 			await chat.save();
-			res.status(200).json({ chat });
+			res.status(200).json(chat);
 		}
 	}),
 ];
