@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import StartChat from "./StartChat";
+import LogOut from "./LogOut";
 
 function ChatItem({ chat }) {
 	return (
@@ -63,6 +64,7 @@ function Inbox() {
 			<>
 				<h1>Inbox</h1>
 				<Link to={`/profile/${user._id}`}>{user.display_name}</Link>
+				<LogOut />
 				<br />
 				<Link to={`/addfriend`}>Add Friends!</Link>
 				{chats != null && <ChatsList chats={chats} />}
